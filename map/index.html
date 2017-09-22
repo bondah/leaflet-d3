@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>dc.js - Bar Chart Example</title>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+	  <link type="text/css" href="css/leaflet.css" rel="stylesheet"/>
+    <link rel="stylesheet" type="text/css" href="css/dc.css"/>
+</head>
+<body>
+
+<style>
+#map { height: 800px; }
+</style>
+
+
+<div class="container">
+  <div class='row'>
+    <div class = 'span12'>
+      <div class='row'>
+        <div class='span6' id="school-row"></div>
+        <div class='span6' id="map"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class='row'>
+    <div id="school-pie">
+    <div>
+  </div>
+</div>
+
+<script type="text/javascript" src="js/d3.js"></script>
+<script type="text/javascript" src="js/crossfilter.js"></script>
+<script type="text/javascript" src="js/dc.js"></script>
+<script type="text/javascript" src="js/leaflet.js"></script>
+<script type="text/javascript" src="js/underscore-min.js"></script>
+<script type="text/javascript">
+
+/* instantiate and configure map */
+var map = L.map('map').setView([34.08, -118.37], 11);
+var schoolMarkers = new L.FeatureGroup();
+
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+	maxZoom: 19,
+	attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+} ).addTo(map);
+
+window.rowchart = dc.rowChart("#school-row");
+window.piechart = dc.pieChart("#school-pie");
+
+d3.tsv("data/pubschls.tsv", function(data) {
+  var ndx = crossfilter(data),
+      countyDimension = ndx.dimension(function(d) {return d.County;}),
+      typeDimension = ndx.dimension(function(d){return d.EdOpsName;}),
+      activeDimension = ndx.dimension(function(d){return d.StatusType;}),
+      activeGroup = countyDimension.group().reduceCount(),
+      typeGroup = typeDimension.group().reduceCount(),
+      allDim = ndx.dimension(function(d) {return d;});
+
+      activeDimension.filter(function(d) {return d === 'Active'});
+
+      rowchart
+        .width(600)
+        .height(800)
+        .elasticX(true)
+        .dimension(countyDimension)
+        .group(activeGroup)
+        .controlsUseVisibility(true);
+
+        piechart
+          .width(1020)
+          .height(480)
+          .innerRadius(100)
+          .dimension(typeDimension)
+          .externalLabels(50)
+          .externalRadiusPadding(50)
+          .drawPaths(true)
+          .group(typeGroup)
+          .legend(dc.legend())
+          piechart.on('pretransition', function(chart) {
+              chart.selectAll('.dc-legend-item text')
+                  .text('')
+                .append('tspan')
+                  .text(function(d) { return d.name; })
+                .append('tspan')
+                  .attr('x', 300)
+                  .attr('text-anchor', 'end')
+                  .text(function(d) { return d.data; });
+          });
+
+          // update map with breweries to match filtered data
+          schoolMarkers.clearLayers();
+          typeDimension.filter(function(d) {return d ==="Alternative School of Choice"});
+          _.each(typeDimension.top(Infinity), function (d) {
+            var name = d.School;
+            var marker = L.marker([d.Latitude, d.Longitude]);
+            marker.bindPopup("<p>"+name+"</p>");
+            schoolMarkers.addLayer(marker);
+          });
+          map.addLayer(schoolMarkers);
+
+        dc.renderAll();
+
+    });
+
+</script>
+
+</div>
+</body>
+</html>
