@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>dc.js - Bar Chart Example</title>
+    <title>School Example</title>
     <meta charset="UTF-8">
     <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
 	  <link type="text/css" href="css/leaflet.css" rel="stylesheet"/>
@@ -10,23 +10,28 @@
 <body>
 
 <style>
-#map { height: 800px; }
+#map { height: 400px; }
 </style>
 
 
-<div class="container">
-  <div class='row'>
-    <div class = 'span12'>
-      <div class='row'>
-        <div class='span6' id="school-row"></div>
-        <div class='span6' id="map"></div>
-      </div>
+<div class="container-fluid">
+  <div class='row-fluid'>
+    <div class = 'span6'>
+      <h2>School Levels <button type="button" class="btn btn-xs">
+            <a href="javascript:rowchart.filterAll(); dc.redrawAll();">Reset</a>
+            </button></h2>
+        <div id="school-row"></div>
     </div>
-  </div>
+    <div class='span6' id="map"></div>
+    </div>
 
-  <div class='row'>
-    <div id="school-pie">
-    <div>
+  <div class='row-fluid'>
+    <div class ='span6'>
+      <h2>School Types <button type="button" class="btn btn-xs">
+        <a href="javascript:piechart.filterAll(); dc.redrawAll();">Reset</a>
+      </button></h2>
+      <div id="school-pie"></div>
+    </div>
   </div>
 </div>
 
@@ -38,13 +43,32 @@
 <script type="text/javascript">
 
 /* instantiate and configure map */
-var map = L.map('map').setView([34.08, -118.37], 11);
+var map = L.map('map').setView([34.06, -118.15], 12);
 var schoolMarkers = new L.FeatureGroup();
 
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+var osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 	maxZoom: 19,
 	attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
 } ).addTo(map);
+
+var stamenTonerLite = L.tileLayer('https://stamen-tiles-{s}.a.ssl.fastly.net/toner-lite/{z}/{x}/{y}.{ext}', {
+	attribution: 'Map tiles by <a href="http://stamen.com">Stamen Design</a>, <a href="http://creativecommons.org/licenses/by/3.0">CC BY 3.0</a> &mdash; Map data &copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+	subdomains: 'abcd',
+	minZoom: 0,
+	maxZoom: 20,
+	ext: 'png'
+});
+
+var baseMaps = {
+    "OpenStreetMap": osm,
+    "Stamen Lite": stamenTonerLite
+};
+
+var overlayMaps = {
+    "Alternative School of Choice": schoolMarkers
+};
+
+L.control.layers(baseMaps, overlayMaps).addTo(map);
 
 window.rowchart = dc.rowChart("#school-row");
 window.piechart = dc.pieChart("#school-pie");
@@ -53,52 +77,59 @@ d3.tsv("data/pubschls.tsv", function(data) {
   var ndx = crossfilter(data),
       countyDimension = ndx.dimension(function(d) {return d.County;}),
       typeDimension = ndx.dimension(function(d){return d.EdOpsName;}),
+      levelDimension = ndx.dimension(function(d){return d.EILName;}),
       activeDimension = ndx.dimension(function(d){return d.StatusType;}),
-      activeGroup = countyDimension.group().reduceCount(),
+      levelGroup = levelDimension.group().reduceCount(),
       typeGroup = typeDimension.group().reduceCount(),
       allDim = ndx.dimension(function(d) {return d;});
 
+      countyDimension.filter(function(d) {return d === 'Los Angeles'})
       activeDimension.filter(function(d) {return d === 'Active'});
 
       rowchart
         .width(600)
-        .height(800)
+        .height(400)
         .elasticX(true)
-        .dimension(countyDimension)
-        .group(activeGroup)
+        .dimension(levelDimension)
+        .group(levelGroup)
         .controlsUseVisibility(true);
 
         piechart
-          .width(1020)
-          .height(480)
-          .innerRadius(100)
+          .width(1000)
+          .height(400)
+          .innerRadius(50)
           .dimension(typeDimension)
           .externalLabels(50)
           .externalRadiusPadding(50)
           .drawPaths(true)
           .group(typeGroup)
           .legend(dc.legend())
-          piechart.on('pretransition', function(chart) {
+          .on('renderlet', function (table) {
+            // each time table is rendered remove nasty extra row dc.js insists on adding
+            table.select('tr.dc-table-group').remove();
+           // update map with schools to match filtered data
+             schoolMarkers.clearLayers();
+             //typeDimension.filter(function(d) {return d ==="Alternative School of Choice"});
+             _.each(allDim.top(Infinity), function (d) {
+               var name = d.School;
+               var marker = L.marker([d.Latitude, d.Longitude]);
+               marker.bindPopup("<p>"+name+"</p>");
+               schoolMarkers.addLayer(marker);
+             });
+             map.addLayer(schoolMarkers);
+           })
+          .on('pretransition', function(chart) {
               chart.selectAll('.dc-legend-item text')
                   .text('')
                 .append('tspan')
                   .text(function(d) { return d.name; })
                 .append('tspan')
-                  .attr('x', 300)
+                  .attr('x', 250)
                   .attr('text-anchor', 'end')
                   .text(function(d) { return d.data; });
+
           });
 
-          // update map with breweries to match filtered data
-          schoolMarkers.clearLayers();
-          typeDimension.filter(function(d) {return d ==="Alternative School of Choice"});
-          _.each(typeDimension.top(Infinity), function (d) {
-            var name = d.School;
-            var marker = L.marker([d.Latitude, d.Longitude]);
-            marker.bindPopup("<p>"+name+"</p>");
-            schoolMarkers.addLayer(marker);
-          });
-          map.addLayer(schoolMarkers);
 
         dc.renderAll();
 
