@@ -1,0 +1,16 @@
+Data Sources:
+California Department of Education: http://www.cde.ca.gov/ds/sd/sd/filesenr.asp
+http://www.cde.ca.gov/ds/si/ds/pubschls.asp
+
+Example of work:
+https://www.ed-data.org/district/Los-Angeles/Los-Angeles-County-Office-of-Education
+https://censusreporter.org/profiles/16000US0644000-los-angeles-ca/
+https://datausa.io/profile/geo/los-angeles-county-ca/
+
+Leaflet: map schools (choropleth?)
+D3: graph 
+
++ Explore the data
++ Use the data in its original format (easy to update)
+
+
