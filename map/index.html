@@ -3,17 +3,20 @@
 <head>
     <title>School Example</title>
     <meta charset="UTF-8">
+
+    <!-- add path to css -->
     <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
-	  <link type="text/css" href="css/leaflet.css" rel="stylesheet"/>
-    <link rel="stylesheet" type="text/css" href="css/dc.css"/>
+	  <link rel="stylesheet" type="text/css" href="css/leaflet.css">
+    <link rel="stylesheet" type="text/css" href="css/dc.css">
 </head>
 <body>
 
+<!-- add map height -->
 <style>
 #map { height: 400px; }
 </style>
 
-
+<!-- set up layout of page -->
 <div class="container-fluid">
   <div class='row-fluid'>
     <div class = 'span6'>
@@ -35,6 +38,7 @@
   </div>
 </div>
 
+<!-- add path to js -->
 <script type="text/javascript" src="js/d3.js"></script>
 <script type="text/javascript" src="js/crossfilter.js"></script>
 <script type="text/javascript" src="js/dc.js"></script>
@@ -42,7 +46,7 @@
 <script type="text/javascript" src="js/underscore-min.js"></script>
 <script type="text/javascript">
 
-/* instantiate and configure map */
+//configure map
 var map = L.map('map').setView([34.06, -118.15], 12);
 var schoolMarkers = new L.FeatureGroup();
 
@@ -65,16 +69,19 @@ var baseMaps = {
 };
 
 var overlayMaps = {
-    "Alternative School of Choice": schoolMarkers
+    "Schools": schoolMarkers
 };
 
 L.control.layers(baseMaps, overlayMaps).addTo(map);
 
+//chart variables
 window.rowchart = dc.rowChart("#school-row");
 window.piechart = dc.pieChart("#school-pie");
 
+//add data and start crossfilter
 d3.tsv("data/pubschls.tsv", function(data) {
   var ndx = crossfilter(data),
+      //crossfilter filtering
       countyDimension = ndx.dimension(function(d) {return d.County;}),
       typeDimension = ndx.dimension(function(d){return d.EdOpsName;}),
       levelDimension = ndx.dimension(function(d){return d.EILName;}),
@@ -86,6 +93,7 @@ d3.tsv("data/pubschls.tsv", function(data) {
       countyDimension.filter(function(d) {return d === 'Los Angeles'})
       activeDimension.filter(function(d) {return d === 'Active'});
 
+      //row chart of school levels
       rowchart
         .width(600)
         .height(400)
@@ -94,6 +102,7 @@ d3.tsv("data/pubschls.tsv", function(data) {
         .group(levelGroup)
         .controlsUseVisibility(true);
 
+        //pie chart of school types
         piechart
           .width(1000)
           .height(400)
@@ -104,12 +113,11 @@ d3.tsv("data/pubschls.tsv", function(data) {
           .drawPaths(true)
           .group(typeGroup)
           .legend(dc.legend())
+
+          //this forces map update to filtered data, you could do this in any crossfilter chart
           .on('renderlet', function (table) {
-            // each time table is rendered remove nasty extra row dc.js insists on adding
-            table.select('tr.dc-table-group').remove();
            // update map with schools to match filtered data
              schoolMarkers.clearLayers();
-             //typeDimension.filter(function(d) {return d ==="Alternative School of Choice"});
              _.each(allDim.top(Infinity), function (d) {
                var name = d.School;
                var marker = L.marker([d.Latitude, d.Longitude]);
@@ -118,6 +126,7 @@ d3.tsv("data/pubschls.tsv", function(data) {
              });
              map.addLayer(schoolMarkers);
            })
+           //adds the summary legend data to the pie chart
           .on('pretransition', function(chart) {
               chart.selectAll('.dc-legend-item text')
                   .text('')
