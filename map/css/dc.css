@@ -99,7 +99,7 @@ div.dc-chart {
     fill-opacity: 0.6; }
 
 .dc-chart g.row text {
-  fill: #fff;
+  fill: black;
   font-size: 12px;
   cursor: pointer; }
 
