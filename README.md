@@ -3,6 +3,7 @@ Leaflet and D3 overview for National Day of Civic Hacking
 
 ## Follow Along!
 [Slides](https://bondah.github.io/leaflet-d3/)
+
 [Example](https://bondah.github.io/leaflet-d3/map/)
 
 ## What we will cover
