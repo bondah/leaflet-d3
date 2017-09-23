@@ -46,7 +46,7 @@
 			position: absolute;
 			font-size: 64px;
 			line-height: 90px;
-			font-weight: bold;
+			font-weight: normal;
 			text-align: left;
 			margin: 15px 1% 0 1%;
 			width: 98%;
@@ -54,12 +54,12 @@
 		.slide.black p{
 			left: 30px;
 			position: absolute;
-			font-size: 64px;
-			line-height: 90px;
-			font-weight: bold;
+			font-size: 50px;
+			line-height: 60px;
+			font-weight: normal;
 			text-align: left;
-			margin: 15px 1% 0 1%;
-			width: 98%;
+			margin: 25px 5% 0 5%;
+			width: 75%;
 			color: white;
 		}
 		.slide img{
@@ -112,29 +112,100 @@
 <body>
 
 <div class="slide image_full">
-	<img src="images/coverpage.jpg"/>
-<p class="title">National Day of Civic Hacking: <br><br>Let's explore education data<br>with Leaflet & D3!</p>
+	<p class="title"><br><br>National Day of Civic Hacking: <br><br>Let's explore education data<br>with Leaflet & D3!</p>
 </div>
 
 <div class="slide">
-	<p class="small"><a target="_blank" href="http://leafletjs.com/">Leaflet</a> is a tool for making interactive web maps<br><br></p>
+	<p class="small"><br>
+  HTML, CSS, and JavaScript have been the 3 core languages making up modern web pages.
+  <br><br>
+  They are supported by all modern web browsers</p>
+</div>
+
+<div class="slide black">
+	<p>What is a library?</p>
+</div>
+
+<div class="slide">
+	<p class="small"><br>
+  Libraries are pre-written JavaScript.
+  <br><br>
+  They let you create robust web application easily. Someone else has done all the hard work!</p>
+</div>
+
+<div class="slide">
+	<p class="small"><br><a target="_blank" href="http://leafletjs.com/">Leaflet js</a> is a library for making interactive web maps<br><br></p>
 	<img src="images/leaflet.png"/>
 </div>
 
 <div class="slide">
 	<p class="small">Reasons to use Leaflet:<br><br>
-	 &#8194 &#8226 maps tell a story <br>
+	 &#8194 &#8226 maps tell a story<br>
 	 &#8194 &#8226 lots of examples to borrow from<br>
-	 &#8194 &#8226 integration with D3<br>
+	 &#8194 &#8226 integration with D3 js<br>
 </div>
 
 <div class="slide">
-	<p>We'll use data from the California Department of Education<br><a target="_blank" href="http://www.cde.ca.gov/ds/si/ds/pubschls.asp">Public Schools</a><br><br></p>
+	<p class="small"><br><a target="_blank" href="https://d3js.org/">D3 js</a> is a library for making interactive graphs/charts<br><br></p>
+	<img src="images/d3.png"/>
 </div>
 
 <div class="slide">
-	<p class="small">If this interests you, please join us at <a target="_blank" href="https://www.meetup.com/MaptimeLA/">Maptime</a>!<br><br></p>
+	<p class="small">Reasons to use D3 js:<br><br>
+	 &#8194 &#8226 graphs help us understand data<br>
+	 &#8194 &#8226 lots of examples to borrow from<br>
+	 &#8194 &#8226 integration with Leaflet<br>
+</div>
+
+<div class="slide">
+	<p class="small"><br>Today we'll use <a target="_blank" href="https://dc-js.github.io/dc.js/">DC js</a> and <a target="_blank" href="http://square.github.io/crossfilter/">Crossfilter js</a> which are libraries that make it easy to display filtered data <br><br></p>
+	<img src="images/dccrossfilter.png"/>
+</div>
+
+<div class="slide">
+	<p class="small">This sounds like a lot of libraries to deal with,<br> but it will make it easier</p>
+</div>
+
+<div class="slide black">
+	<p>How do I start?</p>
+</div>
+
+<div class="slide">
+	<p class="small">First we need data!<br><br>We'll use data from the California Department of Education: <a target="_blank" href="http://www.cde.ca.gov/ds/si/ds/pubschls.asp">Public Schools</a><br><br></p>
+</div>
+
+<div class="slide">
+	<p class="small"><br>You'll also need a code editor.<br><br>There are a lot out there. I prefer <a target="_blank" href="https://atom.io/">Atom.</a><br></p>
+	<img src="images/atom.png"/>
+</div>
+
+<div class="slide">
+	<p class="small"><br>If you are starting from scratch, next you'll set up your folders<br></p>
+	<img src="images/folders.png"/>
+</div>
+
+<div class="slide">
+	<p class="small"><br>And to make life easier, use a version control manager like <a target="_blank" href="https://github.com/">GitHub</a><br><br></p>
+	<img src="images/github.svg"/>
+</div>
+
+<div class="slide">
+	<p class="small"><br>Now you can add all the dependencies, like:<br>
+		&#8194 &#8226 data<br>
+		&#8194 &#8226 images<br>
+		&#8194 &#8226 css files<br>
+		&#8194 &#8226 js files<br><br></p>
+</div>
+
+
+<div class="slide">
+	<p class="small"><br>If this interests you, please join us at <a target="_blank" href="https://www.meetup.com/MaptimeLA/">Maptime</a>!<br><br></p>
 	<img src="images/maptime.png"/>
+</div>
+
+<div class="slide black">
+	<p>Thanks!<br><br>
+	<a target="_blank" href="https://twitter.com/bondaharper">@bondaharper</a></p>
 </div>
 
 <script>
